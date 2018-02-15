@@ -3,6 +3,7 @@ from webbrowser import open_new
 from random import shuffle
 from full_calculation import FullCalculation
 from simplified_calculation import SimplifiedCalculation
+import subprocess as sp
 
 
 def on_closing_root():
@@ -59,7 +60,7 @@ class NavMenu:
         self.menu.add_command(label='GitHub', font=16,
                               command=lambda: open_new('https://github.com/AlexPraefectus/DM_Python'))
         self.menu.add_command(label='Info', font=16,
-                              command=lambda: messagebox.showinfo('Info', 'Oleksandr Korienev, IV-7210'))
+                              command=lambda: messagebox.showinfo('Info', 'Oleksandr Korienev, IV-7210\nVariant №23'))
 
 
 class MyWindow:
@@ -80,6 +81,7 @@ u = set()
 x = set()
 y = set()
 operator = None
+operator_s = None
 
 
 def generate_sets():
@@ -96,8 +98,9 @@ def generate_sets():
         a = {gen_a.pop() for i in range(int(set_a_entry.get()))}
         b = {gen_b.pop() for i in range(int(set_b_entry.get()))}
         c = {gen_c.pop() for i in range(int(set_c_entry.get()))}
-        global operator
+        global operator, operator_s
         operator = FullCalculation(a, b, c, u)
+        operator_s = SimplifiedCalculation(a, b, c, u)
         x = u - c
         y = b
     except ValueError:
@@ -114,7 +117,7 @@ def generate_u():
 
 def collect_callback():
     try:
-        global a, b, c, x, y, operator
+        global a, b, c, x, y, operator, operator_s
         a = {int(i) for i in a_textbox.get('1.0', 'end-1c').split(',')}
         b = {int(i) for i in b_textbox.get('1.0', 'end-1c').split(',')}
         c = {int(i) for i in c_textbox.get('1.0', 'end-1c').split(',')}
@@ -124,6 +127,7 @@ def collect_callback():
         x = u - c
         y = b
         operator = FullCalculation(a, b, c, u)
+        operator_s = SimplifiedCalculation(a, b, c, u)
     except ValueError:
         messagebox.showerror('Error', 'Numbers should be integer, separate values by \',\'')
 
@@ -146,7 +150,9 @@ def show_c_callback():
 def step_1_callback():
     try:
         text_field.delete(1.0, END)
-        text_field.insert(1.0, ' '.join(map(str, operator.step_1())))
+        text_field.insert(1.0, "{}\nunion with\n{}\nresult:\n{}".format(' '.join(map(str, operator.A)),
+                                                                        ' '.join(map(str, operator.B)),
+                                                                        ' '.join(map(str, operator.step_1()))))
     except AttributeError:
         messagebox.showerror('Error', 'operator object is not initialized, please generate or collect the operand sets')
 
@@ -154,7 +160,9 @@ def step_1_callback():
 def step_2_callback():
     try:
         text_field.delete(1.0, END)
-        text_field.insert(1.0, ' '.join(map(str, operator.step_2())))
+        text_field.insert(1.0, "{}\nunion with\n{}\nresult:\n{}".format(' '.join(map(str, operator.A)),
+                                                                        ' '.join(map(str, operator.U - operator.B)),
+                                                                        ' '.join(map(str, operator.step_2()))))
     except AttributeError:
         messagebox.showerror('Error', 'operator object is not initialized, please generate or collect the operand sets')
 
@@ -162,7 +170,9 @@ def step_2_callback():
 def step_3_callback():
     try:
         text_field.delete(1.0, END)
-        text_field.insert(1.0, ' '.join(map(str, operator.step_3())))
+        text_field.insert(1.0, "{}\nunion with\n{}\nresult:\n{}".format(' '.join(map(str, operator.U - operator.A)),
+                                                                        ' '.join(map(str, operator.C)),
+                                                                        ' '.join(map(str, operator.step_3()))))
     except AttributeError:
         messagebox.showerror('Error', 'operator object is not initialized, please generate or collect the operand sets')
 
@@ -170,7 +180,9 @@ def step_3_callback():
 def step_4_callback():
     try:
         text_field.delete(1.0, END)
-        text_field.insert(1.0, ' '.join(map(str, operator.step_4())))
+        text_field.insert(1.0, "{}\nunion with\n{}\nresult:\n{}".format(' '.join(map(str, operator.step_1())),
+                                                                        ' '.join(map(str, operator.step_2())),
+                                                                        ' '.join(map(str, operator.step_4()))))
     except AttributeError:
         messagebox.showerror('Error', 'operator object is not initialized, please generate or collect the operand sets')
 
@@ -178,7 +190,9 @@ def step_4_callback():
 def step_5_callback():
     try:
         text_field.delete(1.0, END)
-        text_field.insert(1.0, ' '.join(map(str, operator.step_5())))
+        text_field.insert(1.0, "{}\nintersects\n{}\nresult:\n{}".format(' '.join(map(str, operator.step_4())),
+                                                                        ' '.join(map(str, operator.U - operator.B)),
+                                                                        ' '.join(map(str, operator.step_5()))))
     except AttributeError:
         messagebox.showerror('Error', 'operator object is not initialized, please generate or collect the operand sets')
 
@@ -186,7 +200,9 @@ def step_5_callback():
 def step_6_callback():
     try:
         text_field.delete(1.0, END)
-        text_field.insert(1.0, ' '.join(map(str, operator.step_6())))
+        text_field.insert(1.0, "{}\nintersects\n{}\nresult:\n{}".format(' '.join(map(str, operator.step_5())),
+                                                                        ' '.join(map(str, operator.A)),
+                                                                        ' '.join(map(str, operator.step_6()))))
     except AttributeError:
         messagebox.showerror('Error', 'operator object is not initialized, please generate or collect the operand sets')
 
@@ -194,9 +210,53 @@ def step_6_callback():
 def step_7_callback():
     try:
         text_field.delete(1.0, END)
-        text_field.insert(1.0, ' '.join(map(str, operator.get_result())))
+        text_field.insert(1.0, "{}\nintersects\n{}\nresult:\n{}".format(' '.join(map(str, operator.step_6())),
+                                                                        ' '.join(map(str, operator.step_3())),
+                                                                        ' '.join(map(str, operator.get_result()))))
     except AttributeError:
         messagebox.showerror('Error', 'operator object is not initialized, please generate or collect the operand sets')
+
+
+def step_1_s_callback():
+    try:
+        text_field.delete(1.0, END)
+        text_field.insert(1.0, "{}\nintersects\n{}\nresult:\n{}".format(' '.join(map(str, operator_s.u - operator_s.b)),
+                                                                        ' '.join(map(str, operator_s.a)),
+                                                                        ' '.join(map(str, operator_s.step_1()))))
+    except AttributeError:
+        messagebox.showerror('Error', 'operator object is not initialized, please generate or collect the operand sets')
+
+
+def step_2_s_callback():
+    try:
+        text_field.delete(1.0, END)
+        text_field.insert(1.0, "{}\nintersects\n{}\nresult:\n{}".format(' '.join(map(str, operator_s.step_1())),
+                                                                        ' '.join(map(str, operator_s.c)),
+                                                                        ' '.join(map(str, operator_s.get_result()))))
+    except AttributeError:
+        messagebox.showerror('Error', 'operator object is not initialized, please generate or collect the operand sets')
+
+
+def show_x_callback():
+    text_field_4.delete(1.0, END)
+    text_field_4.insert(1.0, x)
+
+
+def show_y_callback():
+    text_field_4.delete(1.0, END)
+    text_field_4.insert(1.0, y)
+
+
+def calculate_z_callback():
+    text_field_4.delete(1.0, END)
+    text_field_4.insert(1.0, y.union(x))
+
+
+def run_unittest_callback():
+    p = sp.Popen(['python3', 'testing.py'], stdout=sp.PIPE, stderr=sp.PIPE)
+    output, errors = p.communicate()
+    text_field_4.delete(1.0, END)
+    text_field_4.insert(1.0, output + errors)
 
 
 root = Tk()
@@ -262,17 +322,19 @@ calculate.grid(row=7, column=1, sticky='w')
 #
 #
 win_2 = MyWindow()
+win_2_menu = NavMenu()
+win_2.win.config(menu=win_2_menu.menu)
 # sets output, text frame for output
-sets_frame_buts = Frame(win_2.win)
-show_A = Button(sets_frame_buts, height=2, text="Show A", command=show_a_callback)
-show_B = Button(sets_frame_buts, height=2, text="Show B", command=show_b_callback)
-show_C = Button(sets_frame_buts, height=2, text="Show C", command=show_c_callback)
+sets_frame_buts_w4 = Frame(win_2.win)
+show_A = Button(sets_frame_buts_w4, height=2, text="Show A", command=show_a_callback)
+show_B = Button(sets_frame_buts_w4, height=2, text="Show B", command=show_b_callback)
+show_C = Button(sets_frame_buts_w4, height=2, text="Show C", command=show_c_callback)
 show_A.grid(row=1, column=1, sticky="w")
 show_B.grid(row=1, column=2, sticky="w")
 show_C.grid(row=1, column=3, sticky="w")
-text_field = Text(sets_frame_buts, width=60, height=9, font="Arial 14")
+text_field = Text(sets_frame_buts_w4, width=60, height=9, font="Arial 14")
 text_field.grid(row=2, column=1, columnspan=3, sticky="w")
-sets_frame_buts.grid(row=1, column=1, sticky="w")
+sets_frame_buts_w4.grid(row=1, column=1, sticky="w")
 # step by step calculations
 steps = Frame(win_2.win)
 step_1 = Button(steps, text="Step 1", font=16, command=step_1_callback)
@@ -296,11 +358,52 @@ steps.grid(row=2, column=1, sticky="w")
 win_2.win.withdraw()
 #
 win_3 = MyWindow()
-
+win_3_menu = NavMenu()
+win_3.win.config(menu=win_3_menu.menu)
+sets_frame_buts_n = Frame(win_3.win)
+show_A_n = Button(sets_frame_buts_n, height=2, text="Show A", command=show_a_callback)
+show_B_n = Button(sets_frame_buts_n, height=2, text="Show B", command=show_b_callback)
+show_C_n = Button(sets_frame_buts_n, height=2, text="Show C", command=show_c_callback)
+show_A_n.grid(row=1, column=1, sticky="w")
+show_B_n.grid(row=1, column=2, sticky="w")
+show_C_n.grid(row=1, column=3, sticky="w")
+text_field_n = Text(sets_frame_buts_n, width=60, height=9, font="Arial 14")
+text_field_n.grid(row=2, column=1, columnspan=3, sticky="w")
+sets_frame_buts_n.grid(row=1, column=1, columnspan=3, sticky="w")
+#
+steps_s = Frame(win_3.win)
+step_1 = Button(steps_s, text="Step 1", font=16, command=step_1_s_callback)
+step_2 = Button(steps_s, text="Step 2", font=16, command=step_2_s_callback)
+step_1.grid(row=1, column=1, sticky='w')
+step_2.grid(row=1, column=2, sticky='w')
+save = Button(steps_s, height=1, text="save this step", font=16,
+              command=lambda: print(text_field_n.get('1.0', 'end-1c'), file=filedialog.asksaveasfile(parent=win_2.win)))
+save.grid(row=1, column=3, sticky='w')
+steps_s.grid(row=2, column=1, sticky='w')
 win_3.win.withdraw()
+#
+
 win_4 = MyWindow()
+win_4_menu = NavMenu()
+win_4.win.config(menu=win_4_menu.menu)
+sets_frame_buts_w4 = Frame(win_4.win)
+show_X = Button(sets_frame_buts_w4, height=2, text="Show X", command=show_x_callback)
+show_Y = Button(sets_frame_buts_w4, height=2, text="Show Y", command=show_y_callback)
+calculate_Z = Button(sets_frame_buts_w4, height=2, text="Calculate Z", command=calculate_z_callback)
+show_X.grid(row=1, column=1, sticky="w")
+show_Y.grid(row=1, column=2, sticky="w")
+calculate_Z.grid(row=1, column=3, sticky='w')
+text_field_4 = Text(sets_frame_buts_w4, width=60, height=9, font="Arial 14")
+text_field_4.grid(row=2, column=1, columnspan=3, sticky="w")
+sets_frame_buts_w4.grid(row=1, column=1, sticky="w")
 win_4.win.withdraw()
+run_unittest = Button(win_4.win, text='Run Unit tests',command=run_unittest_callback)
+run_unittest.grid(row=3, column=1, sticky='w')
+#
+
 win_5 = MyWindow()
+win_5_menu = NavMenu()
+win_5.win.config(menu=win_5_menu.menu)
 win_5.win.withdraw()
 
 
