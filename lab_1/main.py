@@ -4,6 +4,7 @@ from random import shuffle
 from full_calculation import FullCalculation
 from simplified_calculation import SimplifiedCalculation
 import subprocess as sp
+import csv
 
 
 def on_closing_root():
@@ -132,6 +133,31 @@ def collect_callback():
         messagebox.showerror('Error', 'Numbers should be integer, separate values by \',\'')
 
 
+def read_from_csv():
+    try:
+        with open(filedialog.askopenfilename(title="Select csv file", filetypes=[('csv files', '*.csv')])) as csvfile:
+            reader = csv.reader(csvfile, delimiter=',')
+            data = [[int(i) for i in row] for row in reader]
+            global u, a, b, c, x, y, operator, operator_s
+            u = {i for i in range(data[0][0], data[0][1] + 1)}
+            a = set(data[1])
+            b = set(data[2])
+            c = set(data[3])
+            if not all([i in u for i in a.union(b).union(c)]):
+                messagebox.showwarning('Warning', 'Numbers are out of universal set range')
+            operator = FullCalculation(a, b, c, u)
+            operator_s = SimplifiedCalculation(a, b, c, u)
+            x = u - c
+            y = b
+    except TypeError:
+        messagebox.showerror('Error', 'Wrong file')
+    except FileNotFoundError:
+        messagebox.showerror('Error', 'File wasn\'t chosen')
+    except ValueError:
+        messagebox.showerror('Error', 'Data format incorrect')
+        messagebox.showinfo('Info', 'Data format:\nint,int - range of u set\nint,...,int - data strings(3 times)')
+
+
 def show_a_callback():
     text_field.delete(1.0, END)
     text_field.insert(1.0, a)
@@ -219,8 +245,8 @@ def step_7_callback():
 
 def step_1_s_callback():
     try:
-        text_field.delete(1.0, END)
-        text_field.insert(1.0, "{}\nintersects\n{}\nresult:\n{}".format(' '.join(map(str, operator_s.u - operator_s.b)),
+        text_field_n.delete(1.0, END)
+        text_field_n.insert(1.0, "{}\nintersects\n{}\nresult:\n{}".format(' '.join(map(str, operator_s.u - operator_s.b)),
                                                                         ' '.join(map(str, operator_s.a)),
                                                                         ' '.join(map(str, operator_s.step_1()))))
     except AttributeError:
@@ -229,12 +255,27 @@ def step_1_s_callback():
 
 def step_2_s_callback():
     try:
-        text_field.delete(1.0, END)
-        text_field.insert(1.0, "{}\nintersects\n{}\nresult:\n{}".format(' '.join(map(str, operator_s.step_1())),
+        text_field_n.delete(1.0, END)
+        text_field_n.insert(1.0, "{}\nintersects\n{}\nresult:\n{}".format(' '.join(map(str, operator_s.step_1())),
                                                                         ' '.join(map(str, operator_s.c)),
                                                                         ' '.join(map(str, operator_s.get_result()))))
     except AttributeError:
         messagebox.showerror('Error', 'operator object is not initialized, please generate or collect the operand sets')
+
+
+def show_a_w3_callback():
+    text_field_n.delete(1.0, END)
+    text_field_n.insert(1.0, a)
+
+
+def show_b_w3_callback():
+    text_field_n.delete(1.0, END)
+    text_field_n.insert(1.0, b)
+
+
+def show_c_w3_callback():
+    text_field_n.delete(1.0, END)
+    text_field_n.insert(1.0, c)
 
 
 def show_x_callback():
@@ -318,7 +359,9 @@ collect.grid(row=3, column=2, sticky='e')
 calculate = Button(text='Calculate', font=16, width=8,
                    command=lambda: messagebox.showinfo('Result', operator.get_result()) if operator else
                    messagebox.showerror('Error', 'Sets-operands are not correct'))
-calculate.grid(row=7, column=1, sticky='w')
+calculate.grid(row=7, column=2, sticky='w')
+read_from_csv_but = Button(text='Read data from csv file', font=16, width=20, command=read_from_csv)
+read_from_csv_but.grid(row=7, column=1, sticky='w')
 #
 #
 win_2 = MyWindow()
@@ -361,9 +404,9 @@ win_3 = MyWindow()
 win_3_menu = NavMenu()
 win_3.win.config(menu=win_3_menu.menu)
 sets_frame_buts_n = Frame(win_3.win)
-show_A_n = Button(sets_frame_buts_n, height=2, text="Show A", command=show_a_callback)
-show_B_n = Button(sets_frame_buts_n, height=2, text="Show B", command=show_b_callback)
-show_C_n = Button(sets_frame_buts_n, height=2, text="Show C", command=show_c_callback)
+show_A_n = Button(sets_frame_buts_n, height=2, text="Show A", command=show_a_w3_callback)
+show_B_n = Button(sets_frame_buts_n, height=2, text="Show B", command=show_b_w3_callback)
+show_C_n = Button(sets_frame_buts_n, height=2, text="Show C", command=show_c_w3_callback)
 show_A_n.grid(row=1, column=1, sticky="w")
 show_B_n.grid(row=1, column=2, sticky="w")
 show_C_n.grid(row=1, column=3, sticky="w")
@@ -397,10 +440,9 @@ text_field_4 = Text(sets_frame_buts_w4, width=60, height=9, font="Arial 14")
 text_field_4.grid(row=2, column=1, columnspan=3, sticky="w")
 sets_frame_buts_w4.grid(row=1, column=1, sticky="w")
 win_4.win.withdraw()
-run_unittest = Button(win_4.win, text='Run Unit tests',command=run_unittest_callback)
+run_unittest = Button(win_4.win, text='Run Unit tests', command=run_unittest_callback)
 run_unittest.grid(row=3, column=1, sticky='w')
 #
-
 win_5 = MyWindow()
 win_5_menu = NavMenu()
 win_5.win.config(menu=win_5_menu.menu)
