@@ -1,0 +1,13 @@
+backports.functools-lru-cache==1.5
+certifi==2018.1.18
+cycler==0.10.0
+decorator==4.2.1
+kiwisolver==1.0.1
+matplotlib==2.2.0
+networkx==2.1
+numpy==1.14.2
+pyparsing==2.2.0
+python-dateutil==2.7.0
+pytz==2018.3
+six==1.11.0
+tornado==4.5.3
