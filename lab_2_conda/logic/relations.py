@@ -1,4 +1,5 @@
 from itertools import cycle
+# TODO clear all test stuff
 
 
 class RelationMaker:
@@ -38,21 +39,28 @@ class RelationMaker:
 
     def form_mother_child_relation(self):
         for i in zip(cycle(self.set_a_operand_for_s), self.set_b_operand_for_s):
-            print(i[0].name, i[1].name)
             if i[0].name != i[1].name:
                 self.s_relation.add((i[0].name, i[1].name))
 
     def form_mother_in_law_relation(self):
-        iter_counter = len(self.set_b_operand_for_r)**2
-        need_counter = len(self.set_b_operand_for_r)
-        while iter_counter > 0 and need_counter > 0:
-            for i in zip(cycle(self.set_a_operand_for_r), self.set_b_operand_for_r):
-                if (i[0].name, i[1].name) not in self.s_relation:
-                    self.r_relation.add((i[0].name, i[1].name))
-                    need_counter -= 1
-                iter_counter -= 1
-            self.set_b_operand_for_r = set(list(self.set_b_operand_for_r))
-            self.set_a_operand_for_r = set(list(self.set_a_operand_for_r))
+        # DEPRECATED
+        # iter_counter = len(self.set_b_operand_for_r)**2
+        # need_counter = len(self.set_b_operand_for_r)
+        # while iter_counter > 0 and need_counter > 0:
+        #     for i in zip(cycle(self.set_a_operand_for_r), self.set_b_operand_for_r):
+        #         print(*i)
+        #         if (i[0].name, i[1].name) not in self.s_relation:
+        #             self.r_relation.add((i[0].name, i[1].name))
+        #             need_counter -= 1
+        #         iter_counter -= 1
+        #     self.set_b_operand_for_r = set(list(self.set_b_operand_for_r))
+        #     self.set_a_operand_for_r = set(list(self.set_a_operand_for_r))
+        for i in self.set_b_operand_for_r:
+            for j in set(list(self.set_a_operand_for_r)):
+                if (j.name, i.name) not in self.s_relation:
+                    self.r_relation.add((j.name, i.name))
+                    break
+
 
 # relation_maker = RelationMaker(A, B)
 # print(relation_maker.set_a, '\n', relation_maker.set_b)

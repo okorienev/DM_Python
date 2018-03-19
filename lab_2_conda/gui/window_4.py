@@ -1,7 +1,7 @@
 from tkinter import Toplevel
 
 
-class win_3:
+class Window4:
     def __init__(self, parent):
         self.win = Toplevel(parent)
         self.win.geometry('600x600')

@@ -1,4 +1,5 @@
 from logic.genders import Male, Female
+
 male_objects = {
     Male('Дмитро'),
     Male('Михайло'),
@@ -9,7 +10,9 @@ male_objects = {
     Male('Вадим'),
     Male('Віктор'),
     Male('Симон'),
-    Male('Степан')
+    Male('Степан'),
+    Male('Ігор'),
+    Male('Сергій')
 }
 
 female_objects = {
@@ -22,5 +25,10 @@ female_objects = {
     Female('Діана'),
     Female('Вікторія'),
     Female('Катерина'),
-    Female('Юстина')
+    Female('Юстина'),
+    Female('Валерія'),
+    Female('Ірина'),
+    Female('Надія'),
+    Female('Валентина'),
+    Female('Ольга')
 }
