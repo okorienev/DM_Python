@@ -1,4 +1,6 @@
 from itertools import cycle, chain
+from random import shuffle
+from functools import reduce
 # TODO clear all test stuff
 
 
@@ -64,6 +66,9 @@ class RelationMaker:
             for j in set(list(self.set_a_operand_for_r)):
                 if (j.name, i.name) not in self.s_relation:
                     self.r_relation.add((j.name, i.name))
+                    self.set_a_operand_for_r = list(self.set_a_operand_for_r)
+                    shuffle(self.set_a_operand_for_r)
+                    self.set_a_operand_for_r = set(self.set_a_operand_for_r)
                     break
 
     def relation_intersection(self):
@@ -83,7 +88,8 @@ class RelationMaker:
 
     def relation_difference_with_u(self):
         if self.s_relation and self.r_relation:
-            universal = set(chain([[(i, j) for i in self.set_a] for j in self.set_b]))
+            universal = [[(i.name, j.name) for i in self.set_a] for j in self.set_b]
+            universal = set(chain(*universal))
             self.difference_with_u = universal - self.r_relation
         return self.difference_with_u
 

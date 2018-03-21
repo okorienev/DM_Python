@@ -9,8 +9,9 @@ from itertools import chain
 from random import choice
 from logic.genders import Male, Female
 
-A = set()
-B = set()
+a = set()
+b = set()
+graph = GraphDrawer(set(), set())
 
 
 def go_to_main():
@@ -37,32 +38,33 @@ def go_to_win_4():
     win_4.win.deiconify()
 
 
-def add_man_callback(event):
-    global A, B
-    for i in win_2.listbox_men.curselection():
-        if win_2.var.get() == 'A':
-            A.add(Male(win_2.listbox_men.get(i)))
-            win_2.listbox_a.insert(END, win_2.listbox_men.get(i))
-        elif win_2.var.get() == 'B':
-            B.add(Male(win_2.listbox_men.get(i)))
-            win_2.listbox_b.insert(END, win_2.listbox_men.get(i))
-    print(A, B)
-
-
-def add_woman_callback(event):
-    global A, B
-    # print(win_2.var.get(), win_2.listbox_men.curselection())
-    for i in win_2.listbox_women.curselection():
-        if win_2.var.get() == 'A':
-            A.add(Female(win_2.listbox_women.get(i)))
-            win_2.listbox_a.insert(END, win_2.listbox_women.get(i))
-        elif win_2.var.get() == 'B':
-            B.add(Female(win_2.listbox_women.get(i)))
-            win_2.listbox_b.insert(END, win_2.listbox_women.get(i))
-    print(A, B)
+# def add_man_callback(event):
+#     global A, B
+#     for i in win_2.listbox_men.curselection():
+#         if win_2.var.get() == 'A':
+#             A.add(Male(win_2.listbox_men.get(i)))
+#             win_2.listbox_a.insert(END, win_2.listbox_men.get(i))
+#         elif win_2.var.get() == 'B':
+#             B.add(Male(win_2.listbox_men.get(i)))
+#             win_2.listbox_b.insert(END, win_2.listbox_men.get(i))
+#     print(A, B)
+#
+#
+# def add_woman_callback(event):
+#     global A, B
+#     # print(win_2.var.get(), win_2.listbox_men.curselection())
+#     for i in win_2.listbox_women.curselection():
+#         if win_2.var.get() == 'A':
+#             A.add(Female(win_2.listbox_women.get(i)))
+#             win_2.listbox_a.insert(END, win_2.listbox_women.get(i))
+#         elif win_2.var.get() == 'B':
+#             B.add(Female(win_2.listbox_women.get(i)))
+#             win_2.listbox_b.insert(END, win_2.listbox_women.get(i))
+#     print(A, B)
 
 
 def default_graph(event):
+    global a, b, graph
     a = {choice(list(chain(male_objects, female_objects))) for i in range(10)}
     b = {choice(list(chain(male_objects, female_objects))) for i in range(10)}
     graph = GraphDrawer(a, b)
@@ -84,6 +86,30 @@ class NavMenu:
         self.menu.add_command(label='Info', font=16,
                               command=lambda: messagebox.showinfo('Info', 'Oleksandr Korienev, IV-7210\nVariant №23'))
 
+
+def input_parser(event):
+    tmp = win_2.textbox.get(1.0, END).split('&')
+    global a, b, graph
+    a.update([Male(i) for i in tmp[0].split()])
+    a.update([Female(i) for i in tmp[1].split()])
+    b.update([Male(i) for i in tmp[2].split()])
+    b.update([Female(i) for i in tmp[3].split()])
+    graph = GraphDrawer(a, b)
+    print(a, b)
+
+
+def show_a(event):
+    win_3.a_set_list.delete(1, END)
+    for i in a:
+        win_3.a_set_list.insert(END, i.name)
+
+
+def show_b(event):
+    win_3.b_set_list.delete(1, END)
+    for i in b:
+        win_3.b_set_list.insert(END, i.name)
+
+
 root = Tk()
 root_menu = NavMenu()
 root.config(menu=root_menu.menu)
@@ -94,14 +120,30 @@ root.geometry('600x600')
 
 win_2 = Win2(root)
 win_2.win.config(menu=NavMenu().menu)
-win_2.button_add_man.bind('<Button-1>', add_man_callback)
-win_2.button_add_woman.bind('<Button-1>', add_woman_callback)
+# win_2.button_add_man.bind('<Button-1>', add_man_callback)
+# win_2.button_add_woman.bind('<Button-1>', add_woman_callback)
+win_2.collect.bind('<Button-1>', input_parser)
+
 
 win_3 = Win3(root)
 win_3_menu = NavMenu()
 win_3.win.config(menu=win_3_menu.menu)
+win_3.a_show_but.bind('<Button-1>', show_a)
+win_3.b_show_but.bind('<Button-1>', show_b)
+win_3.draw_s.bind('<Button-1>', lambda event: GraphDrawer(a, b).draw_graph_mother())
+win_3.draw_r.bind('<Button-1>', lambda event: GraphDrawer(a, b).draw_graph_mother_in_law())
 
 win_4 = Win4(root)
 win_4.win.config(menu=NavMenu().menu)
+win_4.but_intersection.bind('<Button-1>',
+                            lambda event: graph.draw_graph_operation(graph.relation_maker.relation_intersection()))
+win_4.but_union.bind('<Button-1>',
+                     lambda event: graph.draw_graph_operation(graph.relation_maker.relation_union()))
+win_4.but_dif1.bind('<Button-1>',
+                    lambda event: graph.draw_graph_operation(graph.relation_maker.relation_difference()))
+win_4.but_dif2.bind('<Button-1>',
+                    lambda event: graph.draw_graph_operation(graph.relation_maker.relation_difference_with_u()))
+win_4.but_reversed.bind('<Button-1>',
+                    lambda event: graph.draw_graph_operation(graph.relation_maker.reversed_r_relation()))
 
 root.mainloop()
