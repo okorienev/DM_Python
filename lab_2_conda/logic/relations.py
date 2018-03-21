@@ -1,4 +1,4 @@
-from itertools import cycle
+from itertools import cycle, chain
 # TODO clear all test stuff
 
 
@@ -17,6 +17,11 @@ class RelationMaker:
         self.set_b_operand_for_r = self.set_b.copy()
         self.s_relation = set()
         self.r_relation = set()
+        self.intersection = set()
+        self.difference = set()
+        self.union = set()
+        self.difference_with_u = set()
+        self.reversed = set()
 
     def delete_impossible_mother_relation(self):
         """male can't be mother or mother-in-law"""
@@ -61,6 +66,31 @@ class RelationMaker:
                     self.r_relation.add((j.name, i.name))
                     break
 
+    def relation_intersection(self):
+        if self.r_relation and self.s_relation:
+            self.intersection = self.r_relation.intersection(self.s_relation)
+        return self.intersection
+
+    def relation_union(self):
+        if self.s_relation and self.r_relation:
+            self.union = self.r_relation.union(self.s_relation)
+        return self.union
+
+    def relation_difference(self):
+        if self.s_relation and self.r_relation:
+            self.difference = self.r_relation - self.s_relation
+        return self.difference
+
+    def relation_difference_with_u(self):
+        if self.s_relation and self.r_relation:
+            universal = set(chain([[(i, j) for i in self.set_a] for j in self.set_b]))
+            self.difference_with_u = universal - self.r_relation
+        return self.difference_with_u
+
+    def reversed_r_relation(self):
+        if self.r_relation:
+            self.reversed = {(i[1], i[0]) for i in self.r_relation}
+        return self.reversed
 
 # relation_maker = RelationMaker(A, B)
 # print(relation_maker.set_a, '\n', relation_maker.set_b)
