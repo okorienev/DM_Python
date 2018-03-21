@@ -1,7 +1,7 @@
-from tkinter import Tk, Menu, Button,Listbox, Radiobutton, messagebox, END
+from tkinter import Tk, Menu, Button, messagebox, END
 from webbrowser import open_new
 from gui.window_2 import Window2 as Win2
-from gui.window_3 import win_3 as Win3
+from gui.window_3 import Window3 as Win3
 from gui.window_4 import Window4 as Win4
 from logic.graph import GraphDrawer
 from data import male_objects, female_objects
@@ -36,31 +36,6 @@ def go_to_win_4():
     win_2.win.withdraw()
     win_3.win.withdraw()
     win_4.win.deiconify()
-
-
-# def add_man_callback(event):
-#     global A, B
-#     for i in win_2.listbox_men.curselection():
-#         if win_2.var.get() == 'A':
-#             A.add(Male(win_2.listbox_men.get(i)))
-#             win_2.listbox_a.insert(END, win_2.listbox_men.get(i))
-#         elif win_2.var.get() == 'B':
-#             B.add(Male(win_2.listbox_men.get(i)))
-#             win_2.listbox_b.insert(END, win_2.listbox_men.get(i))
-#     print(A, B)
-#
-#
-# def add_woman_callback(event):
-#     global A, B
-#     # print(win_2.var.get(), win_2.listbox_men.curselection())
-#     for i in win_2.listbox_women.curselection():
-#         if win_2.var.get() == 'A':
-#             A.add(Female(win_2.listbox_women.get(i)))
-#             win_2.listbox_a.insert(END, win_2.listbox_women.get(i))
-#         elif win_2.var.get() == 'B':
-#             B.add(Female(win_2.listbox_women.get(i)))
-#             win_2.listbox_b.insert(END, win_2.listbox_women.get(i))
-#     print(A, B)
 
 
 def default_graph(event):
@@ -120,8 +95,6 @@ root.geometry('600x600')
 
 win_2 = Win2(root)
 win_2.win.config(menu=NavMenu().menu)
-# win_2.button_add_man.bind('<Button-1>', add_man_callback)
-# win_2.button_add_woman.bind('<Button-1>', add_woman_callback)
 win_2.collect.bind('<Button-1>', input_parser)
 
 

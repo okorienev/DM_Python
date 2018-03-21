@@ -1,7 +1,7 @@
 from tkinter import Toplevel, Listbox, Button
 
 
-class win_3:
+class Window3:
     def __init__(self, parent):
         self.win = Toplevel(parent)
         self.win.geometry('600x600')
