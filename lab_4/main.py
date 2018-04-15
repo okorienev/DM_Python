@@ -1,5 +1,5 @@
 import tkinter as tk
-from graph import GraphPainter
+from lab_4.graph import GraphPainter
 
 
 def collect_edges():
