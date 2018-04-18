@@ -11,12 +11,13 @@ def collect_edges():
 
 root = tk.Tk()
 graph = GraphPainter(
-    [i for i in range(1, 11)],
-    [(1, 3), (1, 6), (1, 7),
-     (2, 8), (2, 7), (2, 8),
-     (3, 9), (3, 4),
-     (4, 5), (4, 9),
-     (6, 7), (7, 8), (8, 9), (9, 10)]
+    [i for i in range(1, 10)],
+    [(1, 5), (1, 2),
+     (2, 3), (2, 5), (2, 6),
+     (3, 4), (3, 6), (3, 7),
+     (4, 7),
+     (5, 6), (5, 8),
+     (6, 7), (6, 9)]
 )
 f1 = tk.Frame()
 button1 = tk.Button(f1, text="show raw graph", width=16, font=22, command=lambda: graph.draw_raw_graph())
