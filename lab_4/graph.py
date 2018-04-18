@@ -1,18 +1,9 @@
 import networkx as nx
+import networkx.algorithms.coloring as color
 import matplotlib.pyplot as plt
 
 
 class GraphPainter:
-    colours = [
-        "blue",
-        "red",
-        "green",
-        "yellow",
-        "black",
-        "pink",
-        "brown"
-    ]
-
     @staticmethod
     def _clear_plot():
         plt.clf()
@@ -20,6 +11,15 @@ class GraphPainter:
         plt.close()
 
     def __init__(self, node_list=None, edge_list=None):
+        self.colors = [
+            "blue",
+            "red",
+            "green",
+            "yellow",
+            "black",
+            "pink",
+            "brown"
+        ]
         if edge_list is None:
             edge_list = []
         if node_list is None:
@@ -37,8 +37,10 @@ class GraphPainter:
         plt.show()
 
     def draw_coloured_graph(self):
+
         self._clear_plot()
-        colours = list(nx.greedy_color(self.graph).items())
+        colours = list(nx.greedy_color(self.graph,
+                                       strategy='connected_sequential_dfs').items())
         nx.draw_networkx_nodes(self.graph, pos=self.pos, nodelist=[i[0] for i in colours],
                                node_color=[i[1] for i in colours])
         nx.draw_networkx_edges(self.graph, self.pos)
